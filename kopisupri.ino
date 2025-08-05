@@ -307,7 +307,9 @@ float bacaSuhu() {
 
 float bacaAsapPersen() {
   int asapAnalog = analogRead(mq135Pin);
-  return ((4095 - asapAnalog) / 4095.0) * 100.0;
+  Serial.print("Nilai Analog Asap : ");
+  Serial.println(asapAnalog);
+  return (asapAnalog / 4095.0) * 100.0;
 }
 
 void lcdPrintCenter(int row, String text) {
@@ -360,8 +362,9 @@ void mulaiNadaPeringatan() {
 }
 
 void updateBuzzer() {
+  unsigned long currentMillis = millis();
+
   if (isPlayingMelody) {
-    unsigned long currentMillis = millis();
     if (currentMillis - noteStartTime >= noteDurations[currentNote]) {
       currentNote++;
       if (currentNote < noteCount) {
@@ -372,6 +375,9 @@ void updateBuzzer() {
         isPlayingMelody = false;
       }
     }
+  } else if (currentBuzzerMode == BUZZER_PERINGATAN) {
+    // Jika selesai tapi masih dalam mode peringatan, mulai ulang
+    mulaiNadaPeringatan();
   }
 }
 
